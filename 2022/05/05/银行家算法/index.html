@@ -18,7 +18,7 @@
 <meta property="og:image" content="https://www.lifeandcode.top/image/%E9%93%B6%E8%A1%8C%E5%AE%B6%E7%AE%97%E6%B3%95/Screen%20Shot%202022-05-05%20at%2010.52.12.png">
 <meta property="og:image" content="https://www.lifeandcode.top/image/%E9%93%B6%E8%A1%8C%E5%AE%B6%E7%AE%97%E6%B3%95/Screen%20Shot%202022-05-05%20at%2010.52.25.png">
 <meta property="article:published_time" content="2022-05-05T04:29:58.000Z">
-<meta property="article:modified_time" content="2023-06-11T04:53:48.864Z">
+<meta property="article:modified_time" content="2024-06-13T12:11:31.992Z">
 <meta property="article:author" content="王某某">
 <meta property="article:tag" content="C">
 <meta property="article:tag" content="Operating_System 操作系统">
@@ -254,179 +254,7 @@ After judging the first few sequences, we will make a request for process resour
 在通过安全序列函数后，我们将给出一个安全序列。
 在判断前几个序列后，我们将请求进程资源，并确定是否可以分配资源。
 </code></pre>
-<h2 id="代码-code"><a href="#代码-code" class="headerlink" title="代码 code"></a>代码 code</h2><pre><code>#include &lt;stdio.h&gt;
-#include &lt;stdlib.h&gt;
-
-struct process
-&#123;
-    int a,b,c,d;  //max值
-    int x,y,z,v;  //allocation值
-    int need1,need2,need3,need4;  //need值
-    int finish;
-&#125;p[6];
-
-int n=6,i,t;
-int resource[5]=&#123;0&#125;;
-int sum[5]=&#123;0&#125;;
-int avai[4]=&#123;0&#125;;
-int work[4]=&#123;0&#125;;
-int request[4]=&#123;0&#125;;
-
-void Security_Algorithm()
-&#123; 
-    int i;
-    printf(&quot;系统的available值为:%d %d %d %d\n&quot;,avai[0],avai[1],avai[2],avai[3]);
-
-    int flag=1;
-    int t=0;
-    int f[6]=&#123;0&#125;;
-
-    int time;
-while(1)  //
-    &#123;
-        for(i=0;i&lt;n;i++)
-        &#123;
-            if( (p[i].finish==0) &amp;&amp; (p[i].need1&lt;=work[0]&amp;&amp;p[i].need2&lt;=work[1]&amp;&amp;p[i].need3&lt;=work[2]&amp;&amp;p[i].need4&lt;=work[3]) )  //判断此进程是否可以通过当前的available值来运行 
-            &#123;
-            work[0]+=p[i].x;
-            work[1]+=p[i].y;
-            work[2]+=p[i].z;
-            work[3]+=p[i].v;
-            p[i].finish=1;
-            flag++;
-            f[t++]=i;  //记录安全序列数
-            &#125;
-        &#125;
-        if(flag&gt;=6) break;   //当所有
-    &#125;
-
-    for(i=0;i&lt;n;i++)  //不是安全队列的情况
-    &#123;
-        if(p[i].finish!=1)    //如果有一个不能进入序列，即为不安全序列
-        &#123;
-            printf(&quot;系统状态不安全\n&quot;);
-            break;
-        &#125;
-
-    &#125;
-
-    if(i==n)   //是安全队列的情况
-    &#123;
-        printf(&quot;系统状态安全\n&quot;);
-        printf(&quot;安全序列为：  &quot;);
-        for(i=0;i&lt;t;i++)     //循环打印出安全序列
-        &#123;
-            printf(&quot;Process %d &quot;,f[i]);
-        &#125;
-        printf(&quot;\n&quot;);
-    &#125;
-
-&#125;
-
-int main()
-&#123;
-    struct process;
-
-    printf(&quot;注: 本算法代码分析有6个进程、4类资源的问题\n&quot;);
-
-    printf(&quot;请输入四类资源的总数量为：\n&quot;);
-    for(i=0;i&lt;4;i++)         //四类资源的总数量all a,b,c,d  
-    &#123;
-        scanf(&quot;%d&quot;,&amp;resource[i]);
-    &#125;
-
-    printf(&quot;请按次序输入6个进程(p0-p4)的max值:\n&quot;);
-    for(i=0;i&lt;n;i++)     //每个进程所需要来运行的总值，即allocation + need 
-    &#123;
-        scanf(&quot;%d %d %d %d&quot;,&amp;p[i].a,&amp;p[i].b,&amp;p[i].c,&amp;p[i].d);
-        p[i].finish=0;
-    &#125;
-
-    printf(&quot;请按次序输入6个进程(p0-p4)的allocation值:\n&quot;); //已经有的值
-    for(i=0;i&lt;n;i++)&#123;
-        scanf(&quot;%d %d %d %d&quot;,&amp;p[i].x,&amp;p[i].y,&amp;p[i].z,&amp;p[i].v);
-    &#125;
-
-    for(i=0; i&lt;n; i++) //计算出当前已经分配出去的值 之后用总量减去即可得到 avaliable
-    &#123;
-        sum[0]+=p[i].x;
-        sum[1]+=p[i].y;
-        sum[2]+=p[i].z;
-        sum[3]+=p[i].v;
-    &#125;
-
-    for(i=0;i&lt;n;i++) //计算每个程序所需要的值 即 need 
-    &#123;
-        p[i].need1=p[i].a-p[i].x;
-        p[i].need2=p[i].b-p[i].y;
-        p[i].need3=p[i].c-p[i].z;
-        p[i].need4=p[i].d-p[i].v;
-    &#125;
-
-
-    //先调用安全算法
-    for(i=0;i&lt;4;i++)&#123;
-        avai[i]=resource[i]-sum[i];   //得到四个资源在初始时的available值 
-        work[i]=avai[i];   //得到work值
-    &#125;
-    Security_Algorithm();
-
-
-    //将finish置零
-    for(i=0;i&lt;n;i++)
-    &#123;
-        p[i].finish=0;
-    &#125;
-
-    
-    printf(&quot;请输入你想让哪个进程发出请求(0-5):&quot;);
-    scanf(&quot;%d&quot;,&amp;t);
-    printf(&quot;请输入进程发出的请求序列：&quot;);
-
-    for(i=0;i&lt;4;i++)
-    &#123;
-        scanf(&quot;%d&quot;,&amp;request[i]);
-    &#125;
-
-
-
-    if(request[0]&lt;=p[t].need1&amp;&amp;request[1]&lt;=p[t].need2&amp;&amp;request[2]&lt;=p[t].need3&amp;&amp;request[3]&lt;=p[t].need4)
-    &#123;
-        if(request[0]&lt;=avai[0]&amp;&amp;request[1]&lt;=avai[1]&amp;&amp;request[2]&lt;=avai[2]&amp;&amp;request[3]&lt;=avai[3])
-        &#123;
-        //修改allocation值
-            p[t].x+=request[0];
-            p[t].y+=request[1];
-            p[t].z+=request[2];
-            p[t].v+=request[3];
-            printf(&quot;假分配后allocation值:%d %d %d %d\n&quot;,p[t].x,p[t].y,p[t].z,p[t].v);
-        //修改need值
-            p[t].need1-=request[0];
-            p[t].need2-=request[1];
-            p[t].need3-=request[2];
-            p[t].need4-=request[3];
-            printf(&quot;假分配后need值:%d %d %d %d\n&quot;,p[t].need1,p[t].need2,p[t].need3,p[t].need4);
-        //修改available值
-            avai[0]-=request[0];
-            avai[1]-=request[1];
-            avai[2]-=request[2];
-            avai[3]-=request[3];
-
-            for(i=0;i&lt;4;i++)&#123;
-            work[i]=avai[i];
-        &#125;
-            Security_Algorithm();
-            printf(&quot;系统可以分配资源\n&quot;);
-            
-        &#125;
-        else printf(&quot;不满足available值,无法分配\n&quot;);
-    &#125;
-
-    else printf(&quot;不满足条件任何一个进程的need值,无法分配\n&quot;);
-
-    return 0;
-&#125;
-</code></pre>
+<h2 id="代码-code"><a href="#代码-code" class="headerlink" title="代码 code"></a>代码 code</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">process</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="type">int</span> a,b,c,d;  <span class="comment">//max值</span></span><br><span class="line">    <span class="type">int</span> x,y,z,v;  <span class="comment">//allocation值</span></span><br><span class="line">    <span class="type">int</span> need1,need2,need3,need4;  <span class="comment">//need值</span></span><br><span class="line">    <span class="type">int</span> finish;</span><br><span class="line">&#125;p[<span class="number">6</span>];</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> n=<span class="number">6</span>,i,t;</span><br><span class="line"><span class="type">int</span> resource[<span class="number">5</span>]=&#123;<span class="number">0</span>&#125;;</span><br><span class="line"><span class="type">int</span> sum[<span class="number">5</span>]=&#123;<span class="number">0</span>&#125;;</span><br><span class="line"><span class="type">int</span> avai[<span class="number">4</span>]=&#123;<span class="number">0</span>&#125;;</span><br><span class="line"><span class="type">int</span> work[<span class="number">4</span>]=&#123;<span class="number">0</span>&#125;;</span><br><span class="line"><span class="type">int</span> request[<span class="number">4</span>]=&#123;<span class="number">0</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">Security_Algorithm</span><span class="params">()</span></span><br><span class="line">&#123; </span><br><span class="line">    <span class="type">int</span> i;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;系统的available值为:%d %d %d %d\n&quot;</span>,avai[<span class="number">0</span>],avai[<span class="number">1</span>],avai[<span class="number">2</span>],avai[<span class="number">3</span>]);</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> flag=<span class="number">1</span>;</span><br><span class="line">    <span class="type">int</span> t=<span class="number">0</span>;</span><br><span class="line">    <span class="type">int</span> f[<span class="number">6</span>]=&#123;<span class="number">0</span>&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> time;</span><br><span class="line"><span class="keyword">while</span>(<span class="number">1</span>)  <span class="comment">//</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;n;i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>( (p[i].finish==<span class="number">0</span>) &amp;&amp; (p[i].need1&lt;=work[<span class="number">0</span>]&amp;&amp;p[i].need2&lt;=work[<span class="number">1</span>]&amp;&amp;p[i].need3&lt;=work[<span class="number">2</span>]&amp;&amp;p[i].need4&lt;=work[<span class="number">3</span>]) )  <span class="comment">//判断此进程是否可以通过当前的available值来运行 </span></span><br><span class="line">            &#123;</span><br><span class="line">            work[<span class="number">0</span>]+=p[i].x;</span><br><span class="line">            work[<span class="number">1</span>]+=p[i].y;</span><br><span class="line">            work[<span class="number">2</span>]+=p[i].z;</span><br><span class="line">            work[<span class="number">3</span>]+=p[i].v;</span><br><span class="line">            p[i].finish=<span class="number">1</span>;</span><br><span class="line">            flag++;</span><br><span class="line">            f[t++]=i;  <span class="comment">//记录安全序列数</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(flag&gt;=<span class="number">6</span>) <span class="keyword">break</span>;   <span class="comment">//当所有</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;n;i++)  <span class="comment">//不是安全队列的情况</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span>(p[i].finish!=<span class="number">1</span>)    <span class="comment">//如果有一个不能进入序列，即为不安全序列</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;系统状态不安全\n&quot;</span>);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(i==n)   <span class="comment">//是安全队列的情况</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;系统状态安全\n&quot;</span>);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;安全序列为：  &quot;</span>);</span><br><span class="line">        <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;t;i++)     <span class="comment">//循环打印出安全序列</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;Process %d &quot;</span>,f[i]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">process</span>;</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;注: 本算法代码分析有6个进程、4类资源的问题\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;请输入四类资源的总数量为：\n&quot;</span>);</span><br><span class="line">    <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;<span class="number">4</span>;i++)         <span class="comment">//四类资源的总数量all a,b,c,d  </span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>,&amp;resource[i]);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;请按次序输入6个进程(p0-p4)的max值:\n&quot;</span>);</span><br><span class="line">    <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;n;i++)     <span class="comment">//每个进程所需要来运行的总值，即allocation + need </span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">&quot;%d %d %d %d&quot;</span>,&amp;p[i].a,&amp;p[i].b,&amp;p[i].c,&amp;p[i].d);</span><br><span class="line">        p[i].finish=<span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;请按次序输入6个进程(p0-p4)的allocation值:\n&quot;</span>); <span class="comment">//已经有的值</span></span><br><span class="line">    <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;n;i++)&#123;</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">&quot;%d %d %d %d&quot;</span>,&amp;p[i].x,&amp;p[i].y,&amp;p[i].z,&amp;p[i].v);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span>(i=<span class="number">0</span>; i&lt;n; i++) <span class="comment">//计算出当前已经分配出去的值 之后用总量减去即可得到 avaliable</span></span><br><span class="line">    &#123;</span><br><span class="line">        sum[<span class="number">0</span>]+=p[i].x;</span><br><span class="line">        sum[<span class="number">1</span>]+=p[i].y;</span><br><span class="line">        sum[<span class="number">2</span>]+=p[i].z;</span><br><span class="line">        sum[<span class="number">3</span>]+=p[i].v;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;n;i++) <span class="comment">//计算每个程序所需要的值 即 need </span></span><br><span class="line">    &#123;</span><br><span class="line">        p[i].need1=p[i].a-p[i].x;</span><br><span class="line">        p[i].need2=p[i].b-p[i].y;</span><br><span class="line">        p[i].need3=p[i].c-p[i].z;</span><br><span class="line">        p[i].need4=p[i].d-p[i].v;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">//先调用安全算法</span></span><br><span class="line">    <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;<span class="number">4</span>;i++)&#123;</span><br><span class="line">        avai[i]=resource[i]-sum[i];   <span class="comment">//得到四个资源在初始时的available值 </span></span><br><span class="line">        work[i]=avai[i];   <span class="comment">//得到work值</span></span><br><span class="line">    &#125;</span><br><span class="line">    Security_Algorithm();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">//将finish置零</span></span><br><span class="line">    <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;n;i++)</span><br><span class="line">    &#123;</span><br><span class="line">        p[i].finish=<span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    </span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;请输入你想让哪个进程发出请求(0-5):&quot;</span>);</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>,&amp;t);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;请输入进程发出的请求序列：&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;<span class="number">4</span>;i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>,&amp;request[i]);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(request[<span class="number">0</span>]&lt;=p[t].need1&amp;&amp;request[<span class="number">1</span>]&lt;=p[t].need2&amp;&amp;request[<span class="number">2</span>]&lt;=p[t].need3&amp;&amp;request[<span class="number">3</span>]&lt;=p[t].need4)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span>(request[<span class="number">0</span>]&lt;=avai[<span class="number">0</span>]&amp;&amp;request[<span class="number">1</span>]&lt;=avai[<span class="number">1</span>]&amp;&amp;request[<span class="number">2</span>]&lt;=avai[<span class="number">2</span>]&amp;&amp;request[<span class="number">3</span>]&lt;=avai[<span class="number">3</span>])</span><br><span class="line">        &#123;</span><br><span class="line">        <span class="comment">//修改allocation值</span></span><br><span class="line">            p[t].x+=request[<span class="number">0</span>];</span><br><span class="line">            p[t].y+=request[<span class="number">1</span>];</span><br><span class="line">            p[t].z+=request[<span class="number">2</span>];</span><br><span class="line">            p[t].v+=request[<span class="number">3</span>];</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;假分配后allocation值:%d %d %d %d\n&quot;</span>,p[t].x,p[t].y,p[t].z,p[t].v);</span><br><span class="line">        <span class="comment">//修改need值</span></span><br><span class="line">            p[t].need1-=request[<span class="number">0</span>];</span><br><span class="line">            p[t].need2-=request[<span class="number">1</span>];</span><br><span class="line">            p[t].need3-=request[<span class="number">2</span>];</span><br><span class="line">            p[t].need4-=request[<span class="number">3</span>];</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;假分配后need值:%d %d %d %d\n&quot;</span>,p[t].need1,p[t].need2,p[t].need3,p[t].need4);</span><br><span class="line">        <span class="comment">//修改available值</span></span><br><span class="line">            avai[<span class="number">0</span>]-=request[<span class="number">0</span>];</span><br><span class="line">            avai[<span class="number">1</span>]-=request[<span class="number">1</span>];</span><br><span class="line">            avai[<span class="number">2</span>]-=request[<span class="number">2</span>];</span><br><span class="line">            avai[<span class="number">3</span>]-=request[<span class="number">3</span>];</span><br><span class="line"></span><br><span class="line">            <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;<span class="number">4</span>;i++)&#123;</span><br><span class="line">            work[i]=avai[i];</span><br><span class="line">        &#125;</span><br><span class="line">            Security_Algorithm();</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;系统可以分配资源\n&quot;</span>);</span><br><span class="line">            </span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="built_in">printf</span>(<span class="string">&quot;不满足available值,无法分配\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">else</span> <span class="built_in">printf</span>(<span class="string">&quot;不满足条件任何一个进程的need值,无法分配\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="运行结果"><a href="#运行结果" class="headerlink" title="运行结果"></a>运行结果</h2><p><img src="/image/%E9%93%B6%E8%A1%8C%E5%AE%B6%E7%AE%97%E6%B3%95/Screen%20Shot%202022-05-05%20at%2010.52.12.png" alt="Screen Shot 2022-05-05 at 10.52.12"></p>
 <p><img src="/image/%E9%93%B6%E8%A1%8C%E5%AE%B6%E7%AE%97%E6%B3%95/Screen%20Shot%202022-05-05%20at%2010.52.25.png" alt="Screen Shot 2022-05-05 at 10.52.25"></p>
 
@@ -447,7 +275,7 @@ int main()
     2022-05-05
     <br>
     <strong class="update-time">最后更新：</strong>
-    2023-06-11
+    2024-06-13
     <br>
     <strong class="article-titles">本文标题：</strong>
     <a href="https://www.lifeandcode.top/2022/05/05/银行家算法/" title="银行家算法" target="_blank">银行家算法</a>
